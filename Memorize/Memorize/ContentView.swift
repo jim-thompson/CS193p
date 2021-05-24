@@ -8,14 +8,28 @@
 import SwiftUI
 
 struct ContentView: View {
-    var emojis = ["🚕", "🚗", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐", "🚚", "🚛", "🚜", "🛺", "🚃", "🚢", "🚂", "🛵", "🚤", "🎠", "🚁", "🚠", "🛶", "⛵️" ]
+    let emojis1 = ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐", "🚚", "🚛", "🚜", "🛺", "🚃", "🚢", "🚂", "🛵", "🚤", "🎠", "🚁", "🚠", "🛶", "⛵️" ]
+    let emojis2 = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍒", "🍑", "🍍", "🥥", "🥝", "🍆", "🥑"]
+    let emojis3 = ["🏀", "⚽️", "🏈", "⚾️", "🎾", "🏐", "🥏", "🎱", "🏓", "🪀"]
+        
+    init()
+    {
+        // Initialize the current emojis set to set 1
+        current_emojis = emojis1
+    }
+    
+    @State var current_emojis: [String]
+    
     @State var emoji_count = 24;
     
     var body: some View {
         VStack() {
+            Text("Memorize!")
+                .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                .fontWeight(.heavy)
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-                    ForEach(emojis[0..<emoji_count], id: \.self) {
+                    ForEach(current_emojis[0..<current_emojis.count], id: \.self) {
                         emoji in
                         CardView(content: emoji)
                             .aspectRatio(2/3, contentMode: .fit)
@@ -24,36 +38,55 @@ struct ContentView: View {
             }
             Spacer()
             HStack() {
-                remove
+                chooseEmojiSet1
                 Spacer()
-                add
+                chooseEmojiSet2
+                Spacer()
+                chooseEmojiSet3
             }
-            .font(.largeTitle)
             .padding(.horizontal)
         }
         .padding(.horizontal)
     }
     
-    var add: some View {
+    var chooseEmojiSet1: some View {
         Button {
-            if emoji_count < emojis.count {
-                emoji_count += 1
-            }
+            current_emojis = emojis1
+            current_emojis.shuffle()
         } label: {
-            Image(systemName: "plus.circle")
+            VStack() {
+                Image(systemName: "car.fill,....''''''''''''")
+                Text("Move")
+                    .font(.headline)
+            }
         }
     }
     
-    var remove: some View {
+    var chooseEmojiSet2: some View {
         Button {
-            if emoji_count > 1 {
-                emoji_count -= 1
-            }
+            current_emojis = emojis2
+            current_emojis.shuffle()
         } label: {
-            Image(systemName: "minus.circle")
+            VStack() {
+                Image(systemName: "applelogo")
+                Text("Eat")
+                    .font(.headline)
+            }
         }
     }
-}
+    
+    var chooseEmojiSet3: some View {
+        Button {
+            current_emojis = emojis3
+            current_emojis.shuffle()
+        } label: {
+            VStack() {
+                Image(systemName: "play.fill")
+                Text("Play")
+                    .font(.headline)
+            }
+        }
+    }}
 
 struct CardView: View {
     @State var _is_face_up: Bool = true
@@ -79,9 +112,14 @@ struct CardView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
-            .preferredColorScheme(.dark)
-            .previewDevice(/*@START_MENU_TOKEN@*/"iPhone 12 mini"/*@END_MENU_TOKEN@*/)
+        Group {
+            ContentView()
+                .preferredColorScheme(.dark)
+                .previewDevice(/*@START_MENU_TOKEN@*/"iPhone 12 mini"/*@END_MENU_TOKEN@*/)
+            ContentView()
+                .preferredColorScheme(.dark)
+                .previewDevice(/*@START_MENU_TOKEN@*/"iPhone 12 mini"/*@END_MENU_TOKEN@*/)
+        }
         ContentView()
             .preferredColorScheme(.light)
             .previewDevice("iPhone 12 mini")
