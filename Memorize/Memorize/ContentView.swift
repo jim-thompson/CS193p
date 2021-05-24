@@ -55,7 +55,7 @@ struct ContentView: View {
             current_emojis.shuffle()
         } label: {
             VStack() {
-                Image(systemName: "car.fill,....''''''''''''")
+                Image(systemName: "car.fill")
                 Text("Move")
                     .font(.headline)
             }
