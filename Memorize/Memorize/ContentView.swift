@@ -9,17 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     let emojis1 = ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐", "🚚", "🚛", "🚜", "🛺", "🚃", "🚢", "🚂", "🛵", "🚤", "🎠", "🚁", "🚠", "🛶", "⛵️" ]
-    let emojis2 = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍒", "🍑", "🍍", "🥥", "🥝", "🍆", "🥑"]
-    let emojis3 = ["🏀", "⚽️", "🏈", "⚾️", "🎾", "🏐", "🥏", "🎱", "🏓", "🪀"]
+    let emojis2 = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍒", "🍑", "🍍", "🥥", "🥝", "🍆", "🥑", "🥬", "🥭", "🌶"]
+    let emojis3 = ["🏀", "⚽️", "🏈", "⚾️", "🎾", "🏐", "🥏", "🎱", "🏓", "🪀", "🪃", "🥅", "🥊", "🥋", "🛹", "🤿", "🛼", "⛳️", "🪁", "🏹"]
         
-    init()
-    {
-        // Initialize the current emojis set to set 1
-        current_emojis = emojis1
-    }
-    
     @State var current_emojis: [String]
-    
     @State var emoji_count = 24;
     
     var body: some View {
@@ -38,55 +31,47 @@ struct ContentView: View {
             }
             Spacer()
             HStack() {
-                chooseEmojiSet1
+                CardChooser(emojis: emojis1, icon: "car.fill", label: "Move", choose: chooseDeck)
                 Spacer()
-                chooseEmojiSet2
+                CardChooser(emojis: emojis2, icon: "applelogo", label: "Eat", choose: chooseDeck)
                 Spacer()
-                chooseEmojiSet3
+                CardChooser(emojis: emojis3, icon: "play.fill", label: "Play", choose: chooseDeck)
             }
             .padding(.horizontal)
         }
         .padding(.horizontal)
     }
     
-    var chooseEmojiSet1: some View {
+    init()
+    {
+        // Initialize the current emojis set to set 1
+        current_emojis = emojis2
+    }
+    
+    func chooseDeck(deck: [String]) {
+        current_emojis = deck
+        current_emojis.shuffle()
+    }
+}
+
+struct CardChooser: View {
+    let emojis: [String]
+    let icon: String
+    let label: String
+    let choose:  ([String]) -> Void
+    
+    var body: some View {
         Button {
-            current_emojis = emojis1
-            current_emojis.shuffle()
+            choose(emojis)
         } label: {
             VStack() {
-                Image(systemName: "car.fill")
-                Text("Move")
+                Image(systemName: icon)
+                Text(label)
                     .font(.headline)
             }
         }
     }
-    
-    var chooseEmojiSet2: some View {
-        Button {
-            current_emojis = emojis2
-            current_emojis.shuffle()
-        } label: {
-            VStack() {
-                Image(systemName: "applelogo")
-                Text("Eat")
-                    .font(.headline)
-            }
-        }
-    }
-    
-    var chooseEmojiSet3: some View {
-        Button {
-            current_emojis = emojis3
-            current_emojis.shuffle()
-        } label: {
-            VStack() {
-                Image(systemName: "play.fill")
-                Text("Play")
-                    .font(.headline)
-            }
-        }
-    }}
+}
 
 struct CardView: View {
     @State var _is_face_up: Bool = true
@@ -117,7 +102,7 @@ struct ContentView_Previews: PreviewProvider {
                 .preferredColorScheme(.dark)
                 .previewDevice(/*@START_MENU_TOKEN@*/"iPhone 12 mini"/*@END_MENU_TOKEN@*/)
             ContentView()
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(.light)
                 .previewDevice(/*@START_MENU_TOKEN@*/"iPhone 12 mini"/*@END_MENU_TOKEN@*/)
         }
         ContentView()
