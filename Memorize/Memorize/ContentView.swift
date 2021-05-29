@@ -52,7 +52,7 @@ struct ContentView_Previews: PreviewProvider {
         let game = EmojiMemoryGame()
         ContentView(viewModel: game)
             .preferredColorScheme(.dark)
-            .previewDevice(/*@START_MENU_TOKEN@*/"iPhone 12 mini"/*@END_MENU_TOKEN@*/)
+            .previewDevice("iPhone 12 mini")
         ContentView(viewModel: game)
             .preferredColorScheme(.light)
             .previewDevice("iPhone 12 mini")
