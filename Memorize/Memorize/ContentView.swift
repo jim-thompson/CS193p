@@ -11,19 +11,39 @@ struct ContentView: View {
     @ObservedObject var viewModel: EmojiMemoryGame
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-                ForEach(viewModel.cards) { card in
-                    CardView(card: card)
-                        .aspectRatio(2/3, contentMode: .fit)
-                        .onTapGesture {
-                            viewModel.choose(card)
-                        }
+        VStack {
+            HStack {
+                let name = viewModel.currentTheme.name
+                Text("Theme: \(name)")
+                .padding(.leading, 20.0)
+                Spacer()
+                let score = viewModel.currentGame.score
+                Text("Score: \(score)")
+                .padding(.trailing, 20.0)
+            }
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
+                    ForEach(viewModel.cards) { card in
+                        CardView(card: card)
+                            .aspectRatio(2/3, contentMode: .fit)
+                            .onTapGesture {
+                                viewModel.choose(card)
+                            }
+                    }
+                }.foregroundColor(.red)
+            }
+            .font(.largeTitle)
+            .padding(.horizontal)
+            HStack {
+                Button {
+                    print("New Game")
+                    viewModel.setNewGame()
+                } label: {
+                    Text("New Game")
+                        .font(.title)
                 }
-            }.foregroundColor(.red)
+            }
         }
-        .font(.largeTitle)
-        .padding(.horizontal)
     }
 }
 
@@ -44,17 +64,5 @@ struct CardView: View {
                 shape.fill()
             }
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let game = EmojiMemoryGame()
-        ContentView(viewModel: game)
-            .preferredColorScheme(.dark)
-            .previewDevice("iPhone 12 mini")
-        ContentView(viewModel: game)
-            .preferredColorScheme(.light)
-            .previewDevice("iPhone 12 mini")
     }
 }

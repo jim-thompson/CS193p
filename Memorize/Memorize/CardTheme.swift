@@ -12,12 +12,10 @@ struct CardTheme {
     let numberOfPairsToShow: Int
     let color: Color
     let emoji: [String]
+    
+    static let all = [
+        CardTheme(name: "Move", numberOfPairsToShow: 10, color: Color(.red), emoji: ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐", "🚚", "🚛", "🚜", "🛺", "🚃", "🚢", "🚂", "🛵", "🚤", "🎠", "🚁", "🚠", "🛶", "⛵️"]),
+        CardTheme(name: "Eat", numberOfPairsToShow: 10, color: Color(.blue), emoji: ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍒", "🍑", "🍍", "🥥", "🥝", "🍆", "🥑", "🥬", "🥭", "🌶"]),
+        CardTheme(name: "Play", numberOfPairsToShow: 10, color: Color(.green), emoji: ["🏀", "⚽️", "🏈", "⚾️", "🎾", "🏐", "🥏", "🎱", "🏓", "🪀", "🪃", "🥅", "🥊", "🥋", "🛹", "🤿", "🛼", "⛳️", "🪁", "🏹"]),
+    ]
 }
-
-let standardTheme1 = CardTheme(name: "move", numberOfPairsToShow: 10, color: Color(.red), emoji: moveEmoji)
-let standardTheme2 = CardTheme(name: "eat", numberOfPairsToShow: 10, color: Color(.blue), emoji: eatEmoji)
-let standardTheme3 = CardTheme(name: "play", numberOfPairsToShow: 10, color: Color(.green), emoji: playEmoji)
-
-let moveEmoji = ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐", "🚚", "🚛", "🚜", "🛺", "🚃", "🚢", "🚂", "🛵", "🚤", "🎠", "🚁", "🚠", "🛶", "⛵️"]
-let eatEmoji = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍒", "🍑", "🍍", "🥥", "🥝", "🍆", "🥑", "🥬", "🥭", "🌶"]
-let playEmoji = ["🏀", "⚽️", "🏈", "⚾️", "🎾", "🏐", "🥏", "🎱", "🏓", "🪀", "🪃", "🥅", "🥊", "🥋", "🛹", "🤿", "🛼", "⛳️", "🪁", "🏹"]

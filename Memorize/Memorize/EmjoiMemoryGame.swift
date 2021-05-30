@@ -8,8 +8,12 @@
 import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
+    var cards: [MemoryGame<String>.Card] {
+        return currentGame.cards
+    }
+
     static func createMemoryGame(theme: CardTheme) -> MemoryGame<String> {
-        
+                
         // We have a requirement to use all the emoji in the theme (no "dead zones"). A simple way to do this is to shuffle the emoji in the array before created the game. Note that we will still have to shuffle the *cards*.
         
         // We can't shuffle the emoji in place, so we copy them to a variable and then shuffle the variable.
@@ -27,26 +31,26 @@ class EmojiMemoryGame: ObservableObject {
         return game
     }
     
-    @Published private var model = createMemoryGame(theme: standardTheme1)
+    @Published private(set) var currentGame: MemoryGame<String>
+    @Published private(set) var currentTheme: CardTheme!
     
-    var cards: [MemoryGame<String>.Card] {
-        return model.cards
+    init() {
+        (currentTheme, currentGame) = EmojiMemoryGame.randomMemoryGame()
     }
     
-    func loadTheme(_ theme: CardTheme) {
-        
+    static func randomMemoryGame() -> (CardTheme, MemoryGame<String>) {
+        let theme = CardTheme.all[.random(in: 0..<3)]
+        let game = EmojiMemoryGame.createMemoryGame(theme: theme)
+        return (theme, game)
     }
     
     // MARK: - Intents
     
     func choose(_ card: MemoryGame<String>.Card) {
-        objectWillChange.send()
-        model.choose(card)
+        currentGame.choose(card)
     }
     
-    func selectTheme(name: String) {
-        // Find the theme with that name
-        
-        // Load the theme
+    func setNewGame() {
+        (currentTheme, currentGame) = EmojiMemoryGame.randomMemoryGame()
     }
 }
