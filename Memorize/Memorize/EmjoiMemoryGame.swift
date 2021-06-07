@@ -8,6 +8,7 @@
 import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
+    typealias Card = MemoryGame<String>.Card
     var cards: [MemoryGame<String>.Card] {
         return currentGame.cards
     }
