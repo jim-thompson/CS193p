@@ -10,32 +10,140 @@ import SwiftUI
 struct EmojiMemoryGameView: View {
     @ObservedObject var game: EmojiMemoryGame
     
+    @Namespace private var dealingNamespace
+    
     var body: some View {
-        AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
-            CardView(card: card)
-                .padding(4)
-                .onTapGesture {
-                    game.choose(card)
+        ZStack(alignment: .bottom) {
+            VStack {
+                gameBody
+                
+                HStack {
+                    restart
+                    Spacer()
+                    shuffle
                 }
-                .opacity(card.isMatched && !card.isFaceUp ? 0.0 : 1.0)
+                .padding(.horizontal)
+            }
+            deckBody
+        }
+        .padding()
+    }
+    
+    @State private var dealt = Set<Int>() //are these trailing () necessary?
+    
+    private func deal(_ card: EmojiMemoryGame.Card) {
+        dealt.insert(card.id)
+    }
+    
+    private func isUndealt(_ card: EmojiMemoryGame.Card) -> Bool {
+        return !dealt.contains(card.id)
+    }
+    
+    private func dealAnimation(for card: EmojiMemoryGame.Card) -> Animation {
+        var delay = 0.0
+        if let index = game.cards.firstIndex(where: { $0.id == card.id }) {
+            delay = Double(index) * (CardConstants.totalDealDuration / Double(game.cards.count))
+        }
+        return Animation.easeOut(duration: CardConstants.dealDuration).delay(delay)
+    }
+    
+    private func zIndex(of card: EmojiMemoryGame.Card) -> Double {
+        return -Double(game.cards.firstIndex(where: { $0.id == card.id }) ?? 0)
+    }
+    
+    var gameBody: some View {
+        AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
+            if isUndealt(card) || (card.isMatched && !card.isFaceUp) {
+                Color.clear
+            } else {
+                CardView(card: card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .padding(4)
+                    .transition(AnyTransition.asymmetric(insertion: .identity, removal: .scale).animation(.linear(duration: 2)))
+                    .zIndex(zIndex(of: card))
+                    .onTapGesture {
+                        withAnimation {
+                            game.choose(card)
+                        }
+                    }
+            }
         }
         .foregroundColor(.red)
-        .font(.largeTitle)
+    }
+    
+    var deckBody: some View {
+        ZStack {
+            ForEach(game.cards.filter(isUndealt)) { card in
+                CardView(card: card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .identity).animation(.linear(duration: 2)))
+                    .zIndex(zIndex(of: card))
+            }
+        }
+        .frame(width: CardConstants.undealtWidth, height: CardConstants.undealtHeight)
+        .foregroundColor(CardConstants.color)
+        .onTapGesture {
+            for card in game.cards {
+                withAnimation(dealAnimation(for: card)) {
+                    deal(card)
+                }
+            }
+        }
+    }
+        
+    var shuffle: some View {
+        Button("Shuffle") {
+            withAnimation(.easeInOut(duration: 5.0)) {
+                game.shuffle()
+            }
+        }
+    }
+    
+    var restart: some View {
+        Button("Restart") {
+            withAnimation {
+                dealt = []
+                game.restart()
+            }
+        }
+    }
+    
+    private struct CardConstants {
+        static let color = Color.red
+        static let aspectRatio: CGFloat = 2/3
+        static let dealDuration: Double = 0.5
+        static let totalDealDuration: Double = 2
+        static let undealtHeight: CGFloat = 90
+        static let undealtWidth = undealtHeight * aspectRatio
     }
 }
 
 struct CardView: View {
     let card: EmojiMemoryGame.Card
     
+    @State private var animatedBonusRemaining: Double = 0.0
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack() {
-                PieView(startAngle: Angle(degrees: 0-90), endAngle: Angle(degrees: 120-90), direction: true)
-                    .padding(5)
-                    .opacity(0.5)
+                Group {
+                    if card.isConsumingBonusTime {
+                        PieView(startAngle: Angle(degrees: 0-90), endAngle: Angle(degrees: ((1 - animatedBonusRemaining) * 360) - 90))
+                            .onAppear {
+                                animatedBonusRemaining = card.bonusRemaining
+                                withAnimation(.linear(duration: card.bonusTimeRemaining)) {
+                                    animatedBonusRemaining = 0.0
+                                }
+                            }
+                    } else {
+                        PieView(startAngle: Angle(degrees: 0-90), endAngle: Angle(degrees: ((1 - card.bonusRemaining) * 360) - 90))
+                    }
+                }
+                .padding(5)
+                .opacity(0.5)
                 Text(card.content)
                     .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
-                    .animation(.linear.repeatCount(1, autoreverses: false))
+                    .animation(.easeInOut)
                     .font(Font.system(size: DrawingConstants.fontSize))
                     .scaleEffect(scale(thatFits: geometry.size))
             }

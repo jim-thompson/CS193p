@@ -7,10 +7,20 @@
 
 import SwiftUI
 
-struct PieView: Shape {
+struct PieView: Shape  {
     var startAngle: Angle
     var endAngle: Angle
     var direction: Bool = false
+    
+    var animatableData: AnimatablePair<Double, Double> {
+        get {
+            AnimatablePair(startAngle.radians, endAngle.radians)
+        }
+        set {
+            startAngle = Angle.radians(newValue.first)
+            endAngle = Angle.radians(newValue.second)
+        }
+    }
     
     func path(in rect: CGRect) -> Path {
         var p = Path()
