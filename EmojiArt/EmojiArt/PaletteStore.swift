@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Palette: Identifiable, Codable
+struct Palette: Identifiable, Codable, Hashable
 {
     var name: String
     var emojis: String
@@ -34,6 +34,10 @@ class PaletteStore: ObservableObject
     
     private var userDefaultsKey: String {
         "PaletteStore" + name
+    }
+    
+    struct PlayButton {
+        @Binding var isPlaying: Bool
     }
     
     private func storeInUserDefaults()
